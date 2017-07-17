@@ -4,8 +4,9 @@ import requests
 import urllib
 #Here we using termcolor from colored to view coloring.....
 from termcolor import colored
-#You can use SANDBOX USER these users: idilshadali , shivabalre , __nabin_
 
+#You can use these users: idilshadali , shivabalre , __nabin_
+tags = []
 #Here we are using access tocken to access data of instagram by tocken
 APP_ACCESS_TOKEN = '4076541369.19c16c7.1cfc751035ea4e8e845fb7f7c72da78f'
 #Here  we using base url
@@ -198,6 +199,14 @@ def comment_post(instagram_username):
     else:
         print 'Loading.....'
         print "Unable to add comment......"
+def get_loc_id(lat, lng):
+    request_id = (BASE_URL + 'locations/search?lat=%s&lng=%s&access_token=%s') % (lat,lng, APP_ACCESS_TOKEN)
+    print 'req url is: %s' % (request_id)
+    _id = requests.get(request_id).json()
+    if _id['meta']['code'] == 200:
+        return _id['data'][0]['id']
+    else:
+        print 'media id not found.....'
 def get_location():
     for temp_id in locid:
       next_url = (BASE_URL + 'locations/%s/media/recent?access_token=%s') % (temp_id, APP_ACCESS_TOKEN)
@@ -207,6 +216,8 @@ def get_location():
         if len(loc_media['data']):
             print 'Location is..:%s' % (loc_media['data'][0]['location']['name'])
             print loc_media['data'][0]['images']['standard_resolution']['url']
+            print 'Captions Are:'
+            print loc_media['data'][0]['tags']
         else:
             print 'No media'
       else:
@@ -263,14 +274,18 @@ def start_bot():
             list_comments(instagram_username)
         elif choice == '9':
             print 'Loading.....'
-            print colored('You can use these users    idilshadali ,  __nabin_  ,  shivabalre','cyan')
+            print colored('You can use these users    idilshadali ,  __nabin_  ,  shivabalre (admin)!.....','cyan')
             instagram_username = raw_input("Enter username to add a comment.....")
             comment_post(instagram_username)
         elif choice == '10':
             print 'Loading.....'
-            print 'use shivabalre user to get info'
+            print 'You need to use below second url and open with google chrome and find latitude or longitude and enter to get results...'
+            print 'use shivabalre and idishadali user to get latitude or longitude easily'
             insta_username = raw_input("USERNAME:")
             calamities_post(insta_username)
+            lat = float(raw_input('enter lat of user recent post'))
+            lng = float(raw_input('enter lng of user recent post'))
+            get_loc_id(lat, lng)
             get_location()
         elif choice == "11":
             print 'Loading.....'
@@ -287,5 +302,4 @@ if  Menu== "Y" or Menu == "y":
 else:
     print 'Done'
     exit()
-
 #Project Finished.....
